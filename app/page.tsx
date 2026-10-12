@@ -1,12 +1,5 @@
-import { Suspense } from "react";
-import { io } from "next/cache";
-import Image from "next/image";
 import { products } from "@/data/products";
-
-async function CurrentYear() {
-  await io();
-  return <>{new Date().getFullYear()}</>;
-}
+import { CurrentYear } from "@/app/current-year";
 
 export default function HomePage() {
   return (
@@ -137,8 +130,8 @@ export default function HomePage() {
       <footer className="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4">
           <p>
-            © <Suspense fallback={null}><CurrentYear /></Suspense> DroneTech
-            Hub. Platform Rekomendasi & Review Komponen Drone Indonesia.
+            © <CurrentYear /> DroneTech Hub. Platform Rekomendasi & Review
+            Komponen Drone Indonesia.
           </p>
         </div>
       </footer>
