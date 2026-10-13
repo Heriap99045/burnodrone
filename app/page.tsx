@@ -1,5 +1,4 @@
 import { products } from "@/data/products";
-import { CurrentYear } from "@/app/current-year";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -186,7 +185,7 @@ export default function HomePage() {
       <footer className="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4">
           <p>
-            © <CurrentYear /> DroneTech Hub. Platform Rekomendasi & Review
+            © {new Date().getFullYear()} DroneTech Hub. Platform Rekomendasi & Review
             Komponen Drone Indonesia.
           </p>
         </div>
