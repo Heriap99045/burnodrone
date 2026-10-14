@@ -1,7 +1,11 @@
-import { products } from "@/data/products";
+"use client";
+
+import { useProducts } from "@/hooks/use-products";
 import Link from "next/link";
 
 export default function HomePage() {
+  const { products, status, error } = useProducts();
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
       {/* Navigation Bar */}
@@ -9,7 +13,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <Link
             href="/"
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent"
+            className="text-2xl font-bold bg-linear-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent"
           >
               BurnoDrone
           </Link>
@@ -37,7 +41,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
           Portal Rekomendasi Component <br />
-          <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
             Drone & UAV Technology
           </span>
         </h1>
@@ -68,6 +72,21 @@ export default function HomePage() {
           Rekomendasi Component & Parts Pilihan
         </h2>
 
+        {status === "loading" && (
+          <p className="text-slate-400" role="status">
+            Memuat katalog dari Supabase...
+          </p>
+        )}
+        {status === "error" && (
+          <p className="rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-red-200" role="alert">
+            {error}
+          </p>
+        )}
+        {status === "success" && products.length === 0 && (
+          <p className="text-slate-400">
+            Belum ada produk di katalog Supabase.
+          </p>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((item) => (
             <div
@@ -97,7 +116,7 @@ export default function HomePage() {
                   </div>
                   <div className="flex gap-2">
                     <Link
-                      href={`/katalog/${item.id}`}
+                      href={`/katalog/detail?id=${encodeURIComponent(item.id)}`}
                       className="flex-1 rounded-lg bg-slate-700 py-2 text-center text-xs font-medium text-white transition hover:bg-slate-600"
                     >
                       Detail

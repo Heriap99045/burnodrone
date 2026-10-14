@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { products } from "@/data/products";
+import type { Product } from "@/data/products";
+import { useProducts } from "@/hooks/use-products";
 
 type MissionType = "fpv" | "mapping" | "agri" | "vtol";
 
 export default function CalculatorPage() {
+  const { products, status, error } = useProducts();
   const [mission, setMission] = useState<MissionType>("agri");
   const [weight, setWeight] = useState(4.8);
   const [payload, setPayload] = useState(1.8);
@@ -40,17 +42,18 @@ export default function CalculatorPage() {
   }, [batteryVoltage, flightTime, motorCount, payload, weight]);
 
   const recommendedProducts = useMemo(() => {
-    switch (mission) {
-      case "mapping":
-        return [products[0], products[2], products[1]];
-      case "fpv":
-        return [products[0], products[1], products[3]];
-      case "vtol":
-        return [products[0], products[3], products[2]];
-      default:
-        return [products[0], products[3], products[2]];
-    }
-  }, [mission]);
+    const categoryPreferences: Record<MissionType, string[]> = {
+      fpv: ["Camera & Gimbal", "Flight Controller", "Actuators"],
+      mapping: ["GPS & Navigation", "Flight Controller", "Camera & Gimbal"],
+      agri: ["Actuators", "Flight Controller", "GPS & Navigation"],
+      vtol: ["Actuators", "Flight Controller", "GPS & Navigation"],
+    };
+    const matches = categoryPreferences[mission]
+      .map((category) => products.find((product) => product.category === category))
+      .filter((product): product is Product => product !== undefined);
+
+    return matches.length > 0 ? matches : products.slice(0, 3);
+  }, [mission, products]);
 
   const missionLabel: Record<MissionType, string> = {
     fpv: "FPV / Cine",
@@ -290,6 +293,22 @@ export default function CalculatorPage() {
               Lihat semua katalog →
             </Link>
           </div>
+
+          {status === "loading" && (
+            <p className="text-slate-400" role="status">
+              Memuat rekomendasi dari Supabase...
+            </p>
+          )}
+          {status === "error" && (
+            <p className="mb-6 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-red-200" role="alert">
+              {error}
+            </p>
+          )}
+          {status === "success" && products.length === 0 && (
+            <p className="text-slate-400">
+              Belum ada produk di katalog Supabase.
+            </p>
+          )}
 
           <div className="grid md:grid-cols-3 gap-6">
             {recommendedProducts.map((item) => (

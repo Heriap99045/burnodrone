@@ -1,0 +1,37 @@
+import type { Product } from "@/data/products";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+
+export async function getProducts(): Promise<Product[]> {
+  const { data, error } = await getSupabaseBrowserClient()
+    .from("products")
+    .select("id, name, category, specs, price, image, affiliate_url")
+    .order("name");
+
+  if (error) {
+    throw new Error(`Gagal mengambil katalog dari Supabase: ${error.message}`);
+  }
+
+  return data.map(({ affiliate_url, ...product }) => ({
+    ...product,
+    affiliateUrl: affiliate_url,
+  }));
+}
+
+export async function getProductById(id: string): Promise<Product | null> {
+  const { data, error } = await getSupabaseBrowserClient()
+    .from("products")
+    .select("id, name, category, specs, price, image, affiliate_url")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Gagal mengambil produk dari Supabase: ${error.message}`);
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  const { affiliate_url, ...product } = data;
+  return { ...product, affiliateUrl: affiliate_url };
+}

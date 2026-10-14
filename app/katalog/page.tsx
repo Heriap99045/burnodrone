@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/use-products";
 
 export default function CatalogPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const { products, status, error } = useProducts();
 
   const categories = [
     "All",
@@ -14,6 +15,7 @@ export default function CatalogPage() {
     "Camera & Gimbal",
     "GPS & Navigation",
     "Actuators",
+    "Propulsion & Motor",
   ];
 
   const filteredProducts = products.filter((item) => {
@@ -27,7 +29,6 @@ export default function CatalogPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
-      {/* Header / Navbar */}
       <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
@@ -40,11 +41,8 @@ export default function CatalogPage() {
             <Link href="/katalog" className="text-blue-400 font-semibold">
               Katalog
             </Link>
-            <Link href="/kalkulator" className="hover:text-blue-400 transition">
-              Kalkulator Drone
-            </Link>
-            <Link href="/panduan" className="hover:text-blue-400 transition">
-              Panduan Rakit
+            <Link href="/artikel" className="hover:text-blue-400 transition">
+              Artikel & Tutorial
             </Link>
             <Link href="/about" className="hover:text-blue-400 transition">
               Tentang Kami
@@ -53,7 +51,6 @@ export default function CatalogPage() {
         </div>
       </header>
 
-      {/* Hero & Search */}
       <main className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold mb-2">
@@ -65,7 +62,6 @@ export default function CatalogPage() {
           </p>
         </div>
 
-        {/* Search & Filter Bar */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <input
             type="text"
@@ -91,60 +87,62 @@ export default function CatalogPage() {
           </div>
         </div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((item) => (
-            <div
-              key={item.id}
-              className="bg-slate-800/50 border border-slate-700/60 rounded-xl overflow-hidden hover:border-blue-500/50 transition flex flex-col"
-            >
-              <div className="relative h-48 w-full bg-slate-900">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-2 left-2 bg-blue-600/90 text-xs px-2 py-1 rounded text-white font-semibold">
-                  {item.category}
-                </span>
-              </div>
-              <div className="p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-bold text-lg mb-1 text-slate-100">
-                    {item.name}
-                  </h3>
-                  <p className="text-xs text-slate-400 mb-3">{item.specs}</p>
+        {status === "loading" && (
+          <p className="text-slate-400" role="status">
+            Memuat katalog dari Supabase...
+          </p>
+        )}
+        {status === "error" && (
+          <p
+            className="rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-red-200"
+            role="alert"
+          >
+            {error}
+          </p>
+        )}
+        {status === "success" && filteredProducts.length === 0 && (
+          <p className="text-slate-300">Produk tidak ditemukan di katalog.</p>
+        )}
+        {status === "success" && filteredProducts.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((item) => (
+              <div
+                key={item.id}
+                className="bg-slate-800/50 border border-slate-700/60 rounded-xl overflow-hidden hover:border-blue-500/50 transition flex flex-col"
+              >
+                <div className="relative h-48 w-full bg-slate-900">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <span className="absolute top-2 left-2 bg-blue-600/90 text-xs px-2 py-1 rounded text-white font-semibold">
+                    {item.category}
+                  </span>
                 </div>
-                <div>
-                  <div className="text-emerald-400 font-bold text-lg mb-3">
-                    {item.price}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-bold text-lg mb-1 text-slate-100">
+                      {item.name}
+                    </h3>
+                    <p className="text-xs text-slate-400 mb-3">{item.specs}</p>
                   </div>
-                  <div className="flex gap-2">
-                    <Link
-                      href={`/katalog/${item.id}`}
-                      className="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 rounded-lg transition text-xs"
-                    >
-                      Detail Specs
-                    </Link>
+                  <div>
+                    <div className="text-emerald-400 font-bold text-lg mb-3">
+                      {item.price}
+                    </div>
                     <a
                       href={item.affiliateUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg transition text-xs"
+                      className="block text-center w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg transition text-xs"
                     >
-                      Beli
+                      Beli di Marketplace
                     </a>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-16 text-slate-500">
-            Komponen yang Anda cari tidak ditemukan. Coba gunakan kata kunci
-            lain.
+            ))}
           </div>
         )}
       </main>
