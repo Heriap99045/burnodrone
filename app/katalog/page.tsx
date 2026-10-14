@@ -40,6 +40,9 @@ export default function CatalogPage() {
             <Link href="/katalog" className="text-blue-400 font-semibold">
               Katalog
             </Link>
+            <Link href="/kalkulator" className="hover:text-blue-400 transition">
+              Kalkulator Drone
+            </Link>
             <Link href="/panduan" className="hover:text-blue-400 transition">
               Panduan Rakit
             </Link>

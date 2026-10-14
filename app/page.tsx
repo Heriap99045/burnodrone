@@ -20,6 +20,9 @@ export default function HomePage() {
             <Link href="/katalog" className="hover:text-blue-400 transition">
               Katalog
             </Link>
+            <Link href="/kalkulator" className="hover:text-blue-400 transition">
+              Kalkulator Drone
+            </Link>
             <Link href="/panduan" className="hover:text-blue-400 transition">
               Panduan Rakit
             </Link>
@@ -45,16 +48,16 @@ export default function HomePage() {
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link
-            href="/katalog"
+            href="/kalkulator"
             className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
           >
-            Jelajahi Katalog
+            Hitung Setup Drone
           </Link>
           <Link
-            href="/panduan"
+            href="/katalog"
             className="rounded-lg border border-slate-600 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-emerald-400 hover:text-emerald-300"
           >
-            Baca Panduan
+            Jelajahi Katalog
           </Link>
         </div>
       </section>
