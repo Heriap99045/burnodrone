@@ -1,17 +1,36 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { articles } from "@/data/articles";
+import { getArticleBySlug, getArticles } from "@/lib/articles";
+import { Markdown } from "@/lib/markdown";
+import { hasAffiliateLinks } from "@/lib/markdown-parse";
 
-export function generateStaticParams() {
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const articles = await getArticles();
   return articles.map((article) => ({ slug: article.slug }));
 }
 
-export default async function ArticleDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = articles.find((a) => a.slug === slug);
+  const article = await getArticleBySlug(slug);
+  if (!article) return { title: "Artikel tidak ditemukan | BurnoDrone" };
+
+  return {
+    title: `${article.title} | BurnoDrone`,
+    description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      type: "article",
+      images: article.image ? [article.image] : undefined,
+    },
+  };
+}
+
+export default async function ArticleDetailPage({ params }: Props) {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     return (
@@ -25,6 +44,8 @@ export default async function ArticleDetailPage({
       </div>
     );
   }
+
+  const affiliate = hasAffiliateLinks(article.content);
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
@@ -74,24 +95,25 @@ export default async function ArticleDetailPage({
           </div>
         </div>
 
-        <div className="relative h-80 w-full bg-slate-950 rounded-2xl overflow-hidden mb-8">
-          <img
-            src={article.image}
-            alt={article.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        {article.image && (
+          <div className="relative h-80 w-full bg-slate-950 rounded-2xl overflow-hidden mb-8">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={article.image}
+              alt={article.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
 
-        <div className="space-y-6 text-slate-300 leading-relaxed text-sm md:text-base">
-          {article.content.map((paragraph, idx) => (
-            <p
-              key={idx}
-              className="bg-slate-800/20 p-4 rounded-xl border border-slate-800/60"
-            >
-              {paragraph}
-            </p>
-          ))}
-        </div>
+        {affiliate && (
+          <p className="mb-6 rounded-xl border border-slate-700/60 bg-slate-800/40 p-3 text-xs text-slate-400">
+            Artikel ini memuat link afiliasi. Jika Anda membeli lewat link
+            tersebut, kami dapat menerima komisi tanpa biaya tambahan bagi Anda.
+          </p>
+        )}
+
+        <Markdown source={article.content} />
 
         {/* Recommended CTA Box */}
         <div className="mt-12 bg-gradient-to-r from-slate-800 to-slate-900 border border-blue-500/30 p-6 rounded-2xl text-center">

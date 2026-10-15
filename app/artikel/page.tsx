@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { articles } from "@/data/articles";
+import { getArticles } from "@/lib/articles";
 
-export default function ArticlesPage() {
+export const metadata: Metadata = {
+  title: "Artikel & Tutorial Drone | BurnoDrone",
+  description:
+    "Dokumentasi teknis, tutorial integrasi ArduPilot, review hardware UAV, dan kalkulasi rakitan custom drone.",
+};
+
+export default async function ArticlesPage() {
+  const articles = await getArticles();
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
       {/* Header / Navbar */}
@@ -39,47 +48,53 @@ export default function ArticlesPage() {
           </p>
         </div>
 
-        {/* Article Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {articles.map((item) => (
-            <article
-              key={item.id}
-              className="bg-slate-800/40 border border-slate-700/60 rounded-2xl overflow-hidden hover:border-blue-500/50 transition flex flex-col"
-            >
-              <div className="relative h-48 w-full bg-slate-900">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-3 left-3 bg-blue-600/90 text-xs px-2.5 py-1 rounded-md text-white font-medium">
-                  {item.category}
-                </span>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 text-xs text-slate-400 mb-2">
-                    <span>{item.date}</span>
-                    <span>•</span>
-                    <span>{item.readTime}</span>
-                  </div>
-                  <h2 className="font-bold text-lg mb-3 text-slate-100 hover:text-blue-400 transition">
-                    <Link href={`/artikel/${item.slug}`}>{item.title}</Link>
-                  </h2>
-                  <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                    {item.excerpt}
-                  </p>
+        {articles.length === 0 ? (
+          <p className="text-center text-slate-400">Belum ada artikel.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {articles.map((item) => (
+              <article
+                key={item.id}
+                className="bg-slate-800/40 border border-slate-700/60 rounded-2xl overflow-hidden hover:border-blue-500/50 transition flex flex-col"
+              >
+                <div className="relative h-48 w-full bg-slate-900">
+                  {item.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  <span className="absolute top-3 left-3 bg-blue-600/90 text-xs px-2.5 py-1 rounded-md text-white font-medium">
+                    {item.category}
+                  </span>
                 </div>
-                <Link
-                  href={`/artikel/${item.slug}`}
-                  className="inline-flex items-center text-xs font-semibold text-blue-400 hover:text-blue-300 transition"
-                >
-                  Baca Selengkapnya &rarr;
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-3 text-xs text-slate-400 mb-2">
+                      <span>{item.date}</span>
+                      <span>•</span>
+                      <span>{item.readTime}</span>
+                    </div>
+                    <h2 className="font-bold text-lg mb-3 text-slate-100 hover:text-blue-400 transition">
+                      <Link href={`/artikel/${item.slug}`}>{item.title}</Link>
+                    </h2>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                      {item.excerpt}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/artikel/${item.slug}`}
+                    className="inline-flex items-center text-xs font-semibold text-blue-400 hover:text-blue-300 transition"
+                  >
+                    Baca Selengkapnya &rarr;
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
