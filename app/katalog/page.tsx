@@ -9,14 +9,10 @@ export default function CatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { products, status, error } = useProducts();
 
-  const categories = [
-    "All",
-    "Flight Controller",
-    "Camera & Gimbal",
-    "GPS & Navigation",
-    "Actuators",
-    "Propulsion & Motor",
-  ];
+ const categories = [
+  "All",
+  ...Array.from(new Set(products.map((item) => item.category))),
+];
 
   const filteredProducts = products.filter((item) => {
     const matchesSearch =
