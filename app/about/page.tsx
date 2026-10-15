@@ -15,8 +15,8 @@ export default function AboutPage() {
             <Link href="/katalog" className="hover:text-blue-400">
               Katalog
             </Link>
-            <Link href="/panduan" className="hover:text-blue-400">
-              Panduan Rakit
+            <Link href="/artikel" className="hover:text-blue-400">
+              Artikel & Tutorial
             </Link>
             <Link href="/about" className="text-blue-400 font-semibold">
               Tentang Kami

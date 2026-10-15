@@ -86,8 +86,8 @@ export default function CalculatorPage() {
             <Link href="/kalkulator" className="text-blue-400 font-semibold">
               Kalkulator Drone
             </Link>
-            <Link href="/panduan" className="hover:text-blue-400 transition">
-              Panduan Rakit
+            <Link href="/artikel" className="hover:text-blue-400 transition">
+              Artikel & Tutorial
             </Link>
             <Link href="/about" className="hover:text-blue-400 transition">
               Tentang Kami
