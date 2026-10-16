@@ -3,9 +3,11 @@ import { ArticleGrid } from "@/components/article-grid";
 import { CategoryTabs } from "@/components/category-tabs";
 import { SiteHeader } from "@/components/site-header";
 import { getArticles } from "@/lib/articles";
+import { absoluteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Semua Artikel | BurnoTech",
+  alternates: { canonical: absoluteUrl("/artikel") },
   description:
     "Tutorial, panduan, dan wawasan seputar teknologi: drone dan UAV, elektronik, perangkat cerdas, hingga inovasi digital.",
 };

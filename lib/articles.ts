@@ -9,6 +9,8 @@ export interface PublicArticle {
   excerpt: string;
   category: string;
   date: string;
+  publishedAt?: string; // ISO
+  updatedAt?: string; // ISO
   readTime: string;
   image: string;
   content: string; // Markdown
@@ -24,6 +26,7 @@ type Row = {
   content: string;
   published_at: string | null;
   created_at: string;
+  updated_at: string;
 };
 
 const dateFormat = new Intl.DateTimeFormat("id-ID", {
@@ -57,7 +60,7 @@ export const getArticles = cache(async (): Promise<PublicArticle[]> => {
     const { data, error } = await supabase
       .from("articles")
       .select(
-        "id, slug, title, excerpt, category, image, content, published_at, created_at",
+        "id, slug, title, excerpt, category, image, content, published_at, created_at, updated_at",
       )
       .eq("published", true)
       .order("published_at", { ascending: false });
@@ -72,6 +75,8 @@ export const getArticles = cache(async (): Promise<PublicArticle[]> => {
       excerpt: r.excerpt,
       category: r.category,
       date: dateFormat.format(new Date(r.published_at ?? r.created_at)),
+      publishedAt: r.published_at ?? r.created_at,
+      updatedAt: r.updated_at,
       readTime: readTime(r.content),
       image: r.image,
       content: r.content,

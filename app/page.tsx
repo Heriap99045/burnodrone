@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { LatestArticles } from "@/components/latest-articles";
 import { SiteHeader } from "@/components/site-header";
+import type { Metadata } from "next";
 import { NAV_CATEGORIES, categoryHref } from "@/lib/categories";
+import { absoluteUrl } from "@/lib/site";
+
+export const metadata: Metadata = {
+  alternates: { canonical: absoluteUrl("/") },
+};
 
 export default function HomePage() {
   return (

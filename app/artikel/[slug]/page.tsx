@@ -4,6 +4,7 @@ import { getArticleBySlug, getArticles } from "@/lib/articles";
 import { SiteHeader } from "@/components/site-header";
 import { categoryHref } from "@/lib/categories";
 import { Markdown } from "@/lib/markdown";
+import { SITE_NAME, absoluteUrl } from "@/lib/site";
 import { hasAffiliateLinks } from "@/lib/markdown-parse";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -21,10 +22,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${article.title} | BurnoTech`,
     description: article.excerpt,
+    alternates: { canonical: absoluteUrl(`/artikel/${article.slug}`) },
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: "article",
+      url: absoluteUrl(`/artikel/${article.slug}`),
+      siteName: SITE_NAME,
+      locale: "id_ID",
+      publishedTime: article.publishedAt,
+      modifiedTime: article.updatedAt,
       images: article.image ? [article.image] : undefined,
     },
   };
@@ -49,8 +56,26 @@ export default async function ArticleDetailPage({ params }: Props) {
 
   const affiliate = hasAffiliateLinks(article.content);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    image: article.image ? [article.image] : undefined,
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt ?? article.publishedAt,
+    mainEntityOfPage: absoluteUrl(`/artikel/${article.slug}`),
+    publisher: { "@type": "Organization", name: SITE_NAME },
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <SiteHeader active="teknologi" />
 
       {/* Article Body */}

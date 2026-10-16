@@ -4,6 +4,7 @@ import { CategoryTabs } from "@/components/category-tabs";
 import { SiteHeader } from "@/components/site-header";
 import { getArticles } from "@/lib/articles";
 import { NAV_CATEGORIES, categorySlug } from "@/lib/categories";
+import { absoluteUrl } from "@/lib/site";
 
 type Props = { params: Promise<{ kategori: string }> };
 
@@ -31,10 +32,13 @@ async function load(slug: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { kategori } = await params;
-  const { name } = await load(kategori);
+  const { name, articles } = await load(kategori);
   return {
     title: `${name} | BurnoTech`,
     description: `Artikel, tutorial, dan panduan kategori ${name} di BurnoTech.`,
+    alternates: { canonical: absoluteUrl(`/artikel/kategori/${kategori}`) },
+    // Kategori tanpa artikel tidak perlu masuk hasil pencarian.
+    robots: articles.length === 0 ? { index: false, follow: true } : undefined,
   };
 }
 

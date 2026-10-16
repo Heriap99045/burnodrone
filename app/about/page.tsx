@@ -1,4 +1,13 @@
+import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
+import { absoluteUrl } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: "Tentang Kami | BurnoTech",
+  description:
+    "BurnoTech adalah portal artikel dan informasi teknologi: drone dan UAV, elektronik, perangkat cerdas, hingga inovasi digital.",
+  alternates: { canonical: absoluteUrl("/about") },
+};
 
 export default function AboutPage() {
   return (
