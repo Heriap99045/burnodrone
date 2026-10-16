@@ -1,18 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useProducts } from "@/hooks/use-products";
+import { SiteHeader } from "@/components/site-header";
 
 export default function CatalogPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { products, status, error } = useProducts();
 
- const categories = [
-  "All",
-  ...Array.from(new Set(products.map((item) => item.category))),
-];
+  const categories = [
+    "All",
+    "Flight Controller",
+    "Camera & Gimbal",
+    "GPS & Navigation",
+    "Actuators",
+    "Propulsion & Motor",
+  ];
 
   const filteredProducts = products.filter((item) => {
     const matchesSearch =
@@ -25,27 +29,7 @@ export default function CatalogPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent"
-          >
-            BurnoDrone
-          </Link>
-          <nav className="flex gap-6 text-sm font-medium text-slate-300">
-            <Link href="/katalog" className="text-blue-400 font-semibold">
-              Katalog
-            </Link>
-            <Link href="/artikel" className="hover:text-blue-400 transition">
-              Artikel & Tutorial
-            </Link>
-            <Link href="/about" className="hover:text-blue-400 transition">
-              Tentang Kami
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader active="katalog" />
 
       <main className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">

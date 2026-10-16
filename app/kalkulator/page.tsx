@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Product } from "@/data/products";
 import { useProducts } from "@/hooks/use-products";
+import { SiteHeader } from "@/components/site-header";
 
 type MissionType = "fpv" | "mapping" | "agri" | "vtol";
 
@@ -71,30 +72,7 @@ export default function CalculatorPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent"
-          >
-            BurnoDrone
-          </Link>
-          <nav className="flex gap-6 text-sm font-medium text-slate-300">
-            <Link href="/katalog" className="hover:text-blue-400 transition">
-              Katalog
-            </Link>
-            <Link href="/kalkulator" className="text-blue-400 font-semibold">
-              Kalkulator Drone
-            </Link>
-            <Link href="/artikel" className="hover:text-blue-400 transition">
-              Artikel & Tutorial
-            </Link>
-            <Link href="/about" className="hover:text-blue-400 transition">
-              Tentang Kami
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8 text-center">

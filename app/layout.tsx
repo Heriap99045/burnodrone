@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BurnoDrone | Komponen Drone & UAV",
+  title: "BurnoTech | Artikel & Informasi Teknologi",
   description:
-    "Direktori rekomendasi komponen, panduan, dan sistem untuk drone dan UAV.",
+    "Tutorial, panduan, dan wawasan seputar teknologi: drone dan UAV, elektronik, perangkat cerdas, hingga inovasi digital.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -24,7 +25,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }

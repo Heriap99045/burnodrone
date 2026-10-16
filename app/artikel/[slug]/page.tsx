@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getArticleBySlug, getArticles } from "@/lib/articles";
+import { SiteHeader } from "@/components/site-header";
+import { categoryHref } from "@/lib/categories";
 import { Markdown } from "@/lib/markdown";
 import { hasAffiliateLinks } from "@/lib/markdown-parse";
 
@@ -14,10 +16,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
-  if (!article) return { title: "Artikel tidak ditemukan | BurnoDrone" };
+  if (!article) return { title: "Artikel tidak ditemukan | BurnoTech" };
 
   return {
-    title: `${article.title} | BurnoDrone`,
+    title: `${article.title} | BurnoTech`,
     description: article.excerpt,
     openGraph: {
       title: article.title,
@@ -49,28 +51,7 @@ export default async function ArticleDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
-      {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent"
-          >
-            BurnoDrone
-          </Link>
-          <nav className="flex gap-6 text-sm font-medium text-slate-300">
-            <Link href="/katalog" className="hover:text-blue-400">
-              Katalog
-            </Link>
-            <Link href="/artikel" className="text-blue-400">
-              Artikel & Tutorial
-            </Link>
-            <Link href="/about" className="hover:text-blue-400">
-              Tentang Kami
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader active="teknologi" />
 
       {/* Article Body */}
       <main className="max-w-3xl mx-auto px-4 py-12">
@@ -82,9 +63,12 @@ export default async function ArticleDetailPage({ params }: Props) {
         </Link>
 
         <div className="mb-6">
-          <span className="inline-block bg-blue-600/80 text-xs px-2.5 py-1 rounded text-white font-medium mb-3">
+          <Link
+            href={categoryHref(article.category)}
+            className="inline-block bg-blue-600/80 text-xs px-2.5 py-1 rounded text-white font-medium mb-3 hover:bg-blue-500"
+          >
             {article.category}
-          </span>
+          </Link>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">
             {article.title}
           </h1>
