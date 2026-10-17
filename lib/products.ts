@@ -8,7 +8,8 @@ export async function getProducts(): Promise<Product[]> {
     .order("name");
 
   if (error) {
-    throw new Error(`Gagal mengambil katalog dari Supabase: ${error.message}`);
+    console.error("Gagal mengambil katalog:", error.message);
+    throw new Error("Katalog belum dapat dimuat. Silakan muat ulang halaman.");
   }
 
   return data.map(({ affiliate_url, ...product }) => ({
@@ -25,7 +26,8 @@ export async function getProductById(id: string): Promise<Product | null> {
     .maybeSingle();
 
   if (error) {
-    throw new Error(`Gagal mengambil produk dari Supabase: ${error.message}`);
+    console.error("Gagal mengambil produk:", error.message);
+    throw new Error("Produk belum dapat dimuat. Silakan muat ulang halaman.");
   }
 
   if (!data) {

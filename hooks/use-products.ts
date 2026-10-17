@@ -9,12 +9,14 @@ type ProductsState =
   | { status: "success"; products: Product[]; error: null }
   | { status: "error"; products: Product[]; error: string };
 
-export function useProducts() {
-  const [state, setState] = useState<ProductsState>({
-    status: "loading",
-    products: [],
-    error: null,
-  });
+// initialProducts: data yang sudah diambil saat build. Jika ada, halaman langsung tampil
+// tanpa status "memuat", lalu diperbarui diam-diam dengan data terbaru dari database.
+export function useProducts(initialProducts: Product[] = []) {
+  const [state, setState] = useState<ProductsState>(() =>
+    initialProducts.length > 0
+      ? { status: "success", products: initialProducts, error: null }
+      : { status: "loading", products: [], error: null },
+  );
 
   useEffect(() => {
     let active = true;
@@ -26,21 +28,23 @@ export function useProducts() {
         }
       })
       .catch((error: unknown) => {
-        if (active) {
-          setState({
-            status: "error",
-            products: [],
-            error:
-              error instanceof Error
-                ? error.message
-                : "Terjadi kesalahan saat memuat katalog.",
-          });
-        }
+        if (!active) return;
+        // Data awal sudah tampil: jangan ganti dengan pesan galat.
+        if (initialProducts.length > 0) return;
+        setState({
+          status: "error",
+          products: [],
+          error:
+            error instanceof Error
+              ? error.message
+              : "Terjadi kesalahan saat memuat katalog.",
+        });
       });
 
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return state;

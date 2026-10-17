@@ -60,7 +60,7 @@ export default function ProductDetail({ productId }: { productId: string }) {
 
       {status === "loading" && (
         <p className="text-slate-400" role="status">
-          Memuat produk dari Supabase...
+          Memuat produk...
         </p>
       )}
 
