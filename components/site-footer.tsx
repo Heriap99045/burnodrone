@@ -37,6 +37,9 @@ export function SiteFooter() {
           <Link href="/about" className={linkClass}>
             Tentang Kami
           </Link>
+          <Link href="/kebijakan-privasi" className={linkClass}>
+            Kebijakan Privasi
+          </Link>
         </nav>
 
         <nav aria-label="Kategori teknologi" className="flex flex-col gap-2.5">

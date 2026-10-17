@@ -8,7 +8,7 @@ export const dynamic = "force-static";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getArticles();
 
-  const pages = ["/", "/katalog", "/kalkulator", "/artikel", "/about"].map(
+  const pages = ["/", "/katalog", "/kalkulator", "/artikel", "/about", "/kebijakan-privasi"].map(
     (path) => ({ url: absoluteUrl(path) }),
   );
 
