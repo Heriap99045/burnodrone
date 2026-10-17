@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { TechMenu } from "@/components/tech-menu";
+import { NavDropdown } from "@/components/nav-dropdown";
+import {
+  PRODUCT_CATEGORIES,
+  TOPIC_CATEGORIES,
+  TUTORIAL_CATEGORY,
+  categoryHref,
+  productCategoryHref,
+} from "@/lib/categories";
 
 type Active = "katalog" | "teknologi" | "about";
 
@@ -21,10 +28,29 @@ export function SiteHeader({ active }: { active?: Active }) {
           aria-label="Navigasi utama"
           className="flex items-center gap-x-5 text-sm font-medium text-slate-300"
         >
-          <Link href="/katalog" className={linkClass(active === "katalog")}>
-            Katalog
-          </Link>
-          <TechMenu active={active === "teknologi"} />
+          <NavDropdown
+            label="Katalog"
+            active={active === "katalog"}
+            allLabel="Semua Produk"
+            allHref="/katalog"
+            items={PRODUCT_CATEGORIES.map((c) => ({
+              label: c,
+              href: productCategoryHref(c),
+            }))}
+          />
+          <NavDropdown
+            label="Teknologi"
+            active={active === "teknologi"}
+            allLabel="Semua Artikel"
+            allHref="/artikel"
+            items={TOPIC_CATEGORIES.map((c) => ({
+              label: c,
+              href: categoryHref(c),
+            }))}
+            extraItems={[
+              { label: TUTORIAL_CATEGORY, href: categoryHref(TUTORIAL_CATEGORY) },
+            ]}
+          />
           <Link href="/about" className={linkClass(active === "about")}>
             Tentang Kami
           </Link>

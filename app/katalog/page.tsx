@@ -1,21 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useProducts } from "@/hooks/use-products";
 import { SiteHeader } from "@/components/site-header";
+import { categorySlug } from "@/lib/categories";
 
-export default function CatalogPage() {
+function CatalogContent() {
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const selectedSlug = useSearchParams().get("kategori") ?? "";
   const { products, status, error } = useProducts();
 
-  const categories = [
-    "All",
-    "Flight Controller",
-    "Camera & Gimbal",
-    "GPS & Navigation",
-    "Actuators",
-    "Propulsion & Motor",
+  // Tab kategori mengikuti produk yang ada di database.
+  const categories = useMemo(
+    () => Array.from(new Set(products.map((p) => p.category))),
+    [products],
+  );
+  const tabs = [
+    { label: "Semua", slug: "" },
+    ...categories.map((c) => ({ label: c, slug: categorySlug(c) })),
   ];
 
   const filteredProducts = products.filter((item) => {
@@ -23,7 +27,7 @@ export default function CatalogPage() {
       item.name.toLowerCase().includes(search.toLowerCase()) ||
       item.specs.toLowerCase().includes(search.toLowerCase());
     const matchesCategory =
-      selectedCategory === "All" || item.category === selectedCategory;
+      selectedSlug === "" || categorySlug(item.category) === selectedSlug;
     return matchesSearch && matchesCategory;
   });
 
@@ -34,35 +38,36 @@ export default function CatalogPage() {
       <main className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold mb-2">
-            Katalog Komponen Drone & UAV
+            Katalog Perangkat & Komponen
           </h1>
           <p className="text-slate-400">
-            Cari dan temukan komponen custom drone terbaik dengan spesifikasi
-            terlengkap.
+            Cari dan temukan perangkat dan komponen pilihan dengan spesifikasi
+            lengkap.
           </p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <input
             type="text"
-            placeholder="Cari part (misal: CUAV, RTK, Gimbal, Servo)..."
+            placeholder="Cari produk (misal: CUAV, RTK, Gimbal, Servo)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-blue-500"
           />
           <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+            {tabs.map((tab) => (
+              <Link
+                key={tab.slug || "semua"}
+                href={tab.slug ? `/katalog?kategori=${tab.slug}` : "/katalog"}
+                aria-current={selectedSlug === tab.slug ? "page" : undefined}
                 className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition ${
-                  selectedCategory === cat
+                  selectedSlug === tab.slug
                     ? "bg-blue-600 text-white"
                     : "bg-slate-800 text-slate-300 hover:bg-slate-700"
                 }`}
               >
-                {cat}
-              </button>
+                {tab.label}
+              </Link>
             ))}
           </div>
         </div>
@@ -127,5 +132,13 @@ export default function CatalogPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function CatalogPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-900" />}>
+      <CatalogContent />
+    </Suspense>
   );
 }

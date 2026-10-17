@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getArticleBySlug, getArticles } from "@/lib/articles";
+import { ArticleGrid } from "@/components/article-grid";
+import {
+  getArticleBySlug,
+  getArticles,
+  getRelatedArticles,
+} from "@/lib/articles";
 import { SiteHeader } from "@/components/site-header";
 import { categoryHref } from "@/lib/categories";
 import { Markdown } from "@/lib/markdown";
@@ -55,6 +60,7 @@ export default async function ArticleDetailPage({ params }: Props) {
   }
 
   const affiliate = hasAffiliateLinks(article.content);
+  const related = await getRelatedArticles(article.slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -141,6 +147,21 @@ export default async function ArticleDetailPage({ params }: Props) {
           </Link>
         </div>
       </main>
+
+      {related.length > 0 && (
+        <section
+          aria-labelledby="artikel-terkait"
+          className="mx-auto max-w-7xl px-4 pb-16"
+        >
+          <h2
+            id="artikel-terkait"
+            className="mb-6 border-l-4 border-emerald-500 pl-3 text-2xl font-bold"
+          >
+            Artikel Terkait
+          </h2>
+          <ArticleGrid articles={related} />
+        </section>
+      )}
     </div>
   );
 }

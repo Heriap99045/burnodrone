@@ -92,3 +92,16 @@ export async function getArticleBySlug(
 ): Promise<PublicArticle | undefined> {
   return (await getArticles()).find((a) => a.slug === slug);
 }
+
+// Artikel terkait: kategori yang sama lebih dulu, lalu artikel terbaru lainnya.
+export async function getRelatedArticles(
+  slug: string,
+  limit = 3,
+): Promise<PublicArticle[]> {
+  const all = await getArticles();
+  const current = all.find((a) => a.slug === slug);
+  const others = all.filter((a) => a.slug !== slug);
+  const same = current ? others.filter((a) => a.category === current.category) : [];
+  const rest = current ? others.filter((a) => a.category !== current.category) : others;
+  return [...same, ...rest].slice(0, limit);
+}

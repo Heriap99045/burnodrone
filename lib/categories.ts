@@ -24,3 +24,17 @@ export function categorySlug(name: string): string {
 export function categoryHref(name: string): string {
   return `/artikel/kategori/${categorySlug(name)}`;
 }
+
+// Kategori produk yang tampil di menu "Katalog". Samakan dengan kategori produk di admin.
+// Kategori produk lain yang ditambah di admin tetap muncul sebagai tab di halaman Katalog.
+export const PRODUCT_CATEGORIES: string[] = [
+  "Flight Controller",
+  "Camera & Gimbal",
+  "GPS & Navigation",
+  "Actuators",
+  "Propulsion & Motor",
+];
+
+export function productCategoryHref(name: string): string {
+  return `/katalog?kategori=${categorySlug(name)}`;
+}
