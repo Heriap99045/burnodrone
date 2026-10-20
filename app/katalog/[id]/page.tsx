@@ -116,11 +116,7 @@ export default async function ProductDetailPage({ params }: Props) {
               >
                 Cek Stok & Beli di Marketplace &rarr;
               </a>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">
-                Harga dan ketersediaan dapat berubah sewaktu-waktu. Tautan di atas adalah
-                tautan afiliasi: Anda tidak membayar lebih, dan kami dapat menerima komisi
-                kecil.
-              </p>
+            
             </div>
           </div>
         </div>
