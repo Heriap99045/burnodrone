@@ -41,6 +41,17 @@ function CatalogInner({ initialProducts }: { initialProducts: Product[] }) {
     () => Array.from(new Set(products.map((p) => p.category))),
     [products],
   );
+  // Produk yang sudah ada saat situs dibangun punya halaman detail sendiri (/katalog/ID).
+  // Produk yang baru ditambah di admin memakai halaman detail berbasis query sampai situs dibangun ulang.
+  const knownIds = useMemo(
+    () => new Set(initialProducts.map((p) => p.id)),
+    [initialProducts],
+  );
+  const detailHref = (id: string) =>
+    knownIds.has(id)
+      ? `/katalog/${encodeURIComponent(id)}/`
+      : `/katalog/detail/?id=${encodeURIComponent(id)}`;
+
   const tabs = [
     { label: "Semua", slug: "" },
     ...categories.map((c) => ({ label: c, slug: categorySlug(c) })),
@@ -117,44 +128,59 @@ function CatalogInner({ initialProducts }: { initialProducts: Product[] }) {
         )}
         {status === "success" && filteredProducts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((item) => (
-              <div
-                key={item.id}
-                className="bg-slate-800/50 border border-slate-700/60 rounded-xl overflow-hidden hover:border-blue-500/50 transition flex flex-col"
-              >
-                <div className="relative h-48 w-full bg-slate-900">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute top-2 left-2 bg-blue-600/90 text-xs px-2 py-1 rounded text-white font-semibold">
-                    {item.category}
-                  </span>
-                </div>
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-bold text-lg mb-1 text-slate-100">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-slate-400 mb-3">{item.specs}</p>
-                  </div>
-                  <div>
-                    <div className="text-emerald-400 font-bold text-lg mb-3">
-                      {item.price}
+            {filteredProducts.map((item) => {
+              const href = detailHref(item.id);
+              return (
+                <div
+                  key={item.id}
+                  className="bg-slate-800/50 border border-slate-700/60 rounded-xl overflow-hidden hover:border-blue-500/50 transition flex flex-col"
+                >
+                  <Link
+                    href={href}
+                    className="relative block h-48 w-full bg-slate-900"
+                    aria-label={`Lihat detail ${item.name}`}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <span className="absolute top-2 left-2 bg-blue-600/90 text-xs px-2 py-1 rounded text-white font-semibold">
+                      {item.category}
+                    </span>
+                  </Link>
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-bold text-lg mb-1 text-slate-100 transition hover:text-blue-400">
+                        <Link href={href}>{item.name}</Link>
+                      </h3>
+                      <p className="text-xs text-slate-400 mb-3">{item.specs}</p>
                     </div>
-                    <a
-                      href={item.affiliateUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-center w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg transition text-xs"
-                    >
-                      Beli di Marketplace
-                    </a>
+                    <div>
+                      <div className="text-emerald-400 font-bold text-lg mb-3">
+                        {item.price}
+                      </div>
+                      <div className="flex gap-2">
+                        <Link
+                          href={href}
+                          className="flex-1 text-center border border-slate-600 hover:border-blue-500 text-slate-200 font-medium py-2 rounded-lg transition text-xs"
+                        >
+                          Lihat Detail
+                        </Link>
+                        <a
+                          href={item.affiliateUrl}
+                          target="_blank"
+                          rel="sponsored nofollow noopener noreferrer"
+                          className="flex-1 text-center bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg transition text-xs"
+                        >
+                          Beli
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>

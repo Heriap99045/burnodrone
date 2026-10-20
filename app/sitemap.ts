@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getArticles } from "@/lib/articles";
+import { getProductsForBuild } from "@/lib/products-server";
 import { NAV_CATEGORIES, categorySlug } from "@/lib/categories";
 import { absoluteUrl } from "@/lib/site";
 
@@ -7,6 +8,7 @@ export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getArticles();
+  const products = await getProductsForBuild();
 
   const pages = ["/", "/katalog", "/kalkulator", "/artikel", "/about", "/kebijakan-privasi"].map(
     (path) => ({ url: absoluteUrl(path) }),
@@ -22,5 +24,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: a.updatedAt ? new Date(a.updatedAt) : undefined,
   }));
 
-  return [...pages, ...categories, ...posts];
+  const productPages = products.map((p) => ({
+    url: absoluteUrl(`/katalog/${encodeURIComponent(p.id)}`),
+  }));
+
+  return [...pages, ...categories, ...posts, ...productPages];
 }
